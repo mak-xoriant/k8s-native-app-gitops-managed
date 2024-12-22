@@ -28,7 +28,7 @@ hello-dev-minikube:
 # stand-alone
 # recipe:1
 # Destory the existing minikube
-destroy-minikube: stop-minikube delete-minikube
+destroy-minikube: stop-minikube-cluster delete-minikube-cluster
 
 .PHONY:
 	start-minikube
@@ -36,14 +36,14 @@ destroy-minikube: stop-minikube delete-minikube
 
 # stand-alone
 # recipe:1-a
-stop-minikube:
+stop-minikube-cluster:
 	@printf "%s\n" "stoping minikube..." && \
-	$(MINI-K8S) stop
+	$(MINI-K8S) stop -p $(MINI-K8S-PROFILE-NAME)
 
 #recipe:1-b
-delete-minikube:
+delete-minikube-cluster:
 	@printf "%s\n" "deleting minikube's container..." && \
-	$(MINI-K8S) delete
+	$(MINI-K8S) delete -p $(MINI-K8S-PROFILE-NAME)
 
 # stand-alone
 # recipe:2
@@ -91,6 +91,11 @@ offer-hello-node-service-to-consumers:
 
 list-minikube-profile:
 	$(MINI-K8S) profile list
+
+why-its-on-some-ipAndPort:
+	@printf "%s\n" "The IP of node can be found here..." && \
+	kubectl get nodes -o wide && \
+	kubectl get service hello-mini-k8s --output='jsonpath="{.spec.ports[0].nodePort}"'
 
 # stand-alone
 # recipe:5
